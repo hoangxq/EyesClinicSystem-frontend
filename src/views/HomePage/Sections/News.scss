@@ -1,0 +1,45 @@
+
+/* News.scss */
+.slider-container {
+    max-width: 80%;
+    /* Đặt kích thước tối đa của slider */
+    margin: 0 auto;
+
+    /* Canh giữa slider */
+    // background-color: rgb(232, 244, 244);
+    .child-slider {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: center;
+        background-color: #e8ebef;
+
+        text-align: center;
+        height: 50vh;
+
+        /* Điều chỉnh chiều cao cho phù hợp */
+        .image-container img {
+            // display: flex;
+            // z-index: 1;
+            max-width: 70%;
+            /* Đặt chiều rộng tối đa cho hình ảnh */
+            height: auto;
+            margin-left: 15%;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            /* Khoảng cách giữa hình ảnh và văn bản */
+        }
+
+        .text-container p {
+            // display: flex;
+            // z-index: 2;
+            font-size: 18px;
+            /* Điều chỉnh kích thước văn bản */
+            margin: 0;
+            /* Loại bỏ margin mặc định */
+        }
+    }
+
+
+
+}

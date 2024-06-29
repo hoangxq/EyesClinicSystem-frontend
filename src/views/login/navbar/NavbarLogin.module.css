@@ -1,0 +1,34 @@
+.navbar {
+  /* min-height: 100%; */
+  min-width: 100%;
+  width: 100%;
+  display: inline-block;
+}
+
+.navbar a {
+  display: inline-block;
+  height: 5rem;
+  width: 5rem;
+  margin: 2rem;
+  cursor: pointer;
+  vertical-align: top;
+}
+
+.logo {
+  position: absolute;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: #C4C4C4;
+  display: block;
+}
+
+@media screen and (max-width: 1199px) {
+  .navbar {
+    display: flex;
+    justify-content: center;
+  }
+  .navbar a {
+    margin: 16px;
+  }
+}

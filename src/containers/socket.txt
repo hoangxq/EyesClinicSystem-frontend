@@ -1,0 +1,21 @@
+  const [notifyCount, setNotifyCount] = useState(0);
+  const [orders, setOrders] = useState([]); //Dung de display order
+  const [message, setMessage] = useState("");
+  useEffect(() => {
+    socket = io(`${process.env.REACT_APP_SOCKET_API}`); // socket.on('connection')
+    // Thêm _id, role
+  }, [process.env.REACT_APP_SOCKET_API]);
+  useEffect(() => {
+    socket.on("notification", (res) => {
+      console.log(res);
+      // setNotifyCount((notifyCount) => notifyCount++);
+      // setMessage(res.title);
+      // setOrders((orders) => [...orders, order]);
+      // notification.info({
+      //   message: t(`Notification`),
+      //   description: message,
+      //   placement: `bottomRight`,
+      //   duration: 1.5,
+      // });
+    });
+  }, []);

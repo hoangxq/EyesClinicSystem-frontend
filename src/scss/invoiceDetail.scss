@@ -1,0 +1,29 @@
+/* styles.scss */
+
+$green: #52c41a;
+$red: #f5222d;
+$orange: #fa8c16;
+$yellow: #fadb14;
+
+@mixin status-style($border-color) {
+    border: 2px solid $border-color;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #ffffff; /* Màu nền trắng */
+}
+
+.paid-status {
+    @include status-style($green);
+}
+
+.refunded-status {
+    @include status-style($red);
+}
+
+.failed-status {
+    @include status-style($orange);
+}
+
+.unpaid-status {
+    @include status-style($yellow);
+}

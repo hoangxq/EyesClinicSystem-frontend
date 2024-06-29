@@ -1,0 +1,46 @@
+// If you want to override variables do it here
+@import "variables";
+
+// Import CoreUI styles
+@import "~@coreui/coreui/scss/coreui.scss";
+
+// Some temp fixes
+@import "fixes";
+
+// If you want to add something do it here
+@import "custom";
+
+.ant-tag-checkable-checked {
+    background-color: #69dbbc !important;
+}
+.ant-tag-checkable {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.ant-tag {
+    margin: 0 !important;
+}
+@media (max-width: 575px) {
+    
+    .ant-row {
+        justify-content: space-between;
+    }
+    .ant-form-item-control {
+        max-width: 50% !important;
+    }
+    .ant-form-item-control-input-content {
+        max-width: 100% !important;
+    }
+    .ant-form-item-label {
+        max-width: 40% !important;
+    }
+    .try {
+        max-width: 100% !important; 
+    }
+    .login-input {
+        width: calc(200% - 24px) !important;
+    }
+    .payment {
+        width: 200% !important;
+    }
+}
