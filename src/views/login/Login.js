@@ -1,24 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
-import {
-  CCard,
-  CCardBody,
-  CCardGroup,
-  CCol,
-  CContainer,
-  CRow,
-  CCardImg,
-} from "@coreui/react";
+import { useHistory } from "react-router-dom";
 import {
   Form,
-  InputNumber,
   Input,
-  Button,
   Row,
   Col,
   Checkbox,
   message,
-  Radio,
   notification,
 } from "antd";
 import classes from "./Login.module.css";

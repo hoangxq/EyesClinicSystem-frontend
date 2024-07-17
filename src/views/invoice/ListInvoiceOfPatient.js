@@ -23,12 +23,14 @@ import { Link } from "react-router-dom";
 import { numberWithCommas } from "src/services/money";
 import { withNamespaces } from "react-i18next";
 import { pagination as pag } from "src/configs/Pagination";
-import { getAllDoctorSchedule, removeDoctorSchedule } from "src/services/schedule";
-import { getListInvoice, removeInvoice } from "src/services/invoice";
+import { getListInvoice, removeInvoice, getListInvoiceOfPatient } from "src/services/invoice";
 const ListInvoice = ({ match, t }) => {
     const [pagination, setPagination] = useState(pag);
     const [data, setData] = useState();
     const history = useHistory();
+    const storedUser = localStorage.getItem('eyesclinicsystem_user') || null;
+    const user = JSON.parse(storedUser) || null;
+    const userId = user?._id;
     const columns = [
         {
             title: t("ID"),
@@ -162,7 +164,7 @@ const ListInvoice = ({ match, t }) => {
         const storedUser = localStorage.getItem('eyesclinicsystem_user');
         const user = JSON.parse(storedUser);
         const id = user._id;
-        getListInvoice(pagination, {}, {}, (res) => {
+        getListInvoiceOfPatient(id, pagination, {}, {}, (res) => {
             console.log('nnqa')
             if (res.status === 1) {
                 res.data.invoice_list.forEach((invoice) => {
@@ -193,7 +195,7 @@ const ListInvoice = ({ match, t }) => {
 
     useEffect(() => {
         console.log(123)
-        getListInvoice(pagination, {}, {}, (res) => {
+        getListInvoiceOfPatient(userId,pagination, {}, {}, (res) => {
             console.log(123)
             if (res.status === 1) {
                 let key = 1;

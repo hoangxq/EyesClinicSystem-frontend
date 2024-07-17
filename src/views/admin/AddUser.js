@@ -39,7 +39,7 @@ const formItemLayout = {
   },
 };
 
-const AddSale = ({ t }) => {
+const AddUser = ({ t }) => {
   const [form] = Form.useForm();
   const history = useHistory();
 
@@ -273,4 +273,4 @@ const AddSale = ({ t }) => {
   );
 };
 
-export default withNamespaces()(AddSale);
+export default withNamespaces()(AddUser);

@@ -7,7 +7,7 @@ import {
   notification,
   // Avatar
 } from "antd";
-import { Notification, Roles, Status, Type } from "src/configs";
+// import { Notification, Roles, Status, Type } from "src/configs";
 import { Link } from "react-router-dom";
 // import moment from 'moment';
 // import { useSelector } from 'react-redux';

@@ -204,6 +204,25 @@ export function createDoctorSchedule(data, callback) {
     });
 }
 
+export function createDoctorScheduleByPhoneNumber(id, phone, callback) {
+  const axios = AxiosConfig();
+  axios
+    .post(`/doctor_schedule/register/${id}`,{ phone })
+    .then((res) => {
+      callback(res.data);
+    })
+    .catch((err) => {
+      if (err.response) {
+        if (err.response.status === 403) {
+          getToken(() => createDoctorScheduleByPhoneNumber(id, phone, callback));
+        } else {
+          callback(err.response.data);
+        }
+      }
+    });
+}
+
+
 
 
 export function removeDoctorSchedule(schedule_id, callback) {

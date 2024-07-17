@@ -1,5 +1,3 @@
-import axios from "axios";
-import { applyMiddleware } from "redux";
 import { AxiosConfig } from "src/configs";
 import { getToken } from "./auth";
 

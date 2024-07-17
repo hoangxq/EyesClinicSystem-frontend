@@ -33,6 +33,28 @@ export function getProfile(id, callback) {
       }
     });
 }
+
+export function searchUserByPhoneNumber(phone, callback) {
+  const axiosConfig = AxiosConfig();
+
+  axiosConfig
+    .get(`/user/get/info_byphone`, {
+      params: { phone }
+    } )
+    .then((res) => {
+      callback(res.data);
+    })
+    .catch((err) => {
+      if (err.response) {
+        if (err.response.status === 403) {
+          getToken(() => searchUserByPhoneNumber(phone, callback));
+        } else {
+          callback(err.response.data);
+        }
+      }
+    });
+}
+
 export function getListUsers(pagination, filter, sorter, callback) {
   const axios = AxiosConfig();
   let api = "";

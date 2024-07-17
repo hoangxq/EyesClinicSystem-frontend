@@ -20,7 +20,7 @@ export default class MultipleItems extends Component {
                 
                 <ListDoctor />
                 {/* Các phần khác của trang HomePage */}
-                <Link to="/schedules">
+                <Link to="/patient/all-schedules-of-doctors">
                 <div className="fixed-button">
                     <button type="primary">Đăng ký lịch khám ngay</button>
                 </div>

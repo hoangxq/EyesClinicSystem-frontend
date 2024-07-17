@@ -249,9 +249,15 @@
     "History Examination": "Lịch sử khám mắt",
     "Description":"Triệu chứng",
     "Left Eyse": "Mắt trái",
+    "Left Eye": "Mắt trái",
     "Right Eye": "Măt phải",
     "Result": "Kết quả chẩn đoán",
-    "Prescription": "Đơn thuốc"
+    "Prescription": "Đơn thuốc",
+    "Degree": "Học vị",
+    "experience": "Kinh nghiệm",
+    "achievements": "Thành tựu",
+    "Image": "Hình ảnh",
+    "FEMALE":"Nữ"
     
 
 }

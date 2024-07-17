@@ -79,6 +79,8 @@ const HistoryCreate = ({ match, t }) => {
                             duration: 1.5,
                         });
                     }
+                    // history.goBack();
+                    history.replace(document.referrer);
                 });
             },
             onCancel() {

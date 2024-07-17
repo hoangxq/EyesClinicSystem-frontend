@@ -39,7 +39,7 @@ const formItemLayout = {
 };
 
 
-const CustomerDetail = ({ match, t }) => {
+const UserDetail = ({ match, t }) => {
   const [form] = Form.useForm();
   const history = useHistory();
   const [user, setData] = useState();
@@ -503,4 +503,4 @@ const CustomerDetail = ({ match, t }) => {
   );
 };
 
-export default withNamespaces()(CustomerDetail);
+export default withNamespaces()(UserDetail);

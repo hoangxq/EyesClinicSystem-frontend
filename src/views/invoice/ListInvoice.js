@@ -1,39 +1,67 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { CCol, CRow, CCard, CCardBody, CCardHeader } from "@coreui/react";
-import {
-  Table,
-  Tag,
-  Space,
-  notification,
-  Avatar,
-  Button,
-  Modal
-} from "antd";
-import {
-  ExclamationCircleOutlined,
-  UploadOutlined,
-  PlusSquareOutlined,
-} from "@ant-design/icons";
-import { useHistory } from "react-router";
-import { Notification, Roles, Status, Type } from "src/configs";
-import { Link } from "react-router-dom";
-// import moment from 'moment';
-// import { useSelector } from 'react-redux';
+import { Table, Tag, Space, notification, Button, Modal, Input } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { useHistory, Link } from "react-router-dom";
 import { numberWithCommas } from "src/services/money";
 import { withNamespaces } from "react-i18next";
 import { pagination as pag } from "src/configs/Pagination";
-import { getAllDoctorSchedule, removeDoctorSchedule } from "src/services/schedule";
-import { getListInvoice } from "src/services/invoice";
+import { getListInvoice, removeInvoice } from "src/services/invoice";
+import { SearchOutlined } from "@ant-design/icons";
+import removeDiacritics from 'remove-diacritics';
+
 
 const ListInvoice = ({ match, t }) => {
   const [pagination, setPagination] = useState(pag);
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const history = useHistory();
+
+  const statusOptions = [
+    { text: 'Chưa thanh toán', value: 0 },
+    { text: 'Đã thanh toán', value: 1 },
+    { text: 'Đã hoàn', value: 2 },
+    { text: 'Thanh toán không thành công', value: 3 },
+  ];
+
   const columns = [
     {
       title: t("ID"),
       dataIndex: "key",
+    },
+    {
+      title: t("Name"),
+      dataIndex: "userName",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8 }}>
+          <Input
+            placeholder={t("Search Name")}
+            value={selectedKeys[0]}
+            onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onPressEnter={() => handleSearch(selectedKeys, confirm)}
+            style={{ marginBottom: 8, display: 'block' }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => handleSearch(selectedKeys, confirm)}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{ width: 90 }}
+            >
+              {t("Search")}
+            </Button>
+            <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+              {t("Reset")}
+            </Button>
+          </Space>
+        </div>
+      ),
+      filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+      onFilter: (value, record) => {
+        return removeDiacritics(record.userName.toLowerCase()).includes(removeDiacritics(value.toLowerCase()));
+      },
     },
     {
       title: t("Content"),
@@ -42,17 +70,20 @@ const ListInvoice = ({ match, t }) => {
     {
       title: t("Amount"),
       dataIndex: "amount",
+      render: (amount) => numberWithCommas(amount),
     },
     {
       title: t("Date"),
       dataIndex: "created_at",
       defaultSortOrder: 'descend',
-      sorter: (a, b) => moment(a.date) - moment(b.date),
+      sorter: (a, b) => moment(a.created_at) - moment(b.created_at),
       render: (date) => moment(date).format("DD-MM-YYYY"),
     },
     {
       title: t("Status"),
       dataIndex: "status",
+      filters: statusOptions,
+      onFilter: (value, record) => record.status === value,
       render: (status) => {
         let color, name;
         switch (status) {
@@ -73,74 +104,46 @@ const ListInvoice = ({ match, t }) => {
             name = "Thanh toán không thành công";
             break;
           default:
-            color = "default-color"; // Màu mặc định nếu không có trạng thái nào phù hợp
-            name = "Unknown"; // Giá trị mặc định nếu không có trạng thái nào phù hợp
+            color = "default-color";
+            name = "Unknown";
             break;
         }
-
-        return (
-          <>
-            <Tag color={color} key={name}>
-              {name.toUpperCase()}
-            </Tag>
-          </>
-        );
+        return <Tag color={color} key={name}>{name.toUpperCase()}</Tag>;
       },
     },
     {
       title: t("Action"),
       dataIndex: "_id",
-      render: (_id) => {
-        return (
-          <>
-            <Space size="middle">
-              <Link to={`/invoice/${_id}`}>{t("Xem chi tiết")}</Link>
-            </Space>
-
-          </>
-        );
-      },
+      render: (_id, record) => (
+        <Space size="middle">
+          <Link to={`/invoice/${_id}`}>{t("Xem chi tiết")}</Link>
+          {record.status === 2 && (
+            <Button onClick={() => handleDeleteClick(_id)}>{t("Delete")}</Button>
+          )}
+        </Space>
+      ),
     },
-
-    {
-      title: t(""),
-      dataIndex: "_id",
-      render: (_id) => {
-        return (
-          <>
-            <Space size="middle">
-              {/* <Link to={`/schedules/${_id}`}>{t("Register")}</Link> */}
-              <Button onClick={() => handleDeleteClick(_id)}>{t("Delete")}</Button>
-            </Space>
-          </>
-        );
-      },
-    },
-
   ];
+
   const handleDeleteClick = (id) => {
     Modal.confirm({
       title: t(`Xóa hóa đơn`),
       icon: <ExclamationCircleOutlined />,
-      content: t(
-        `You are going to delete this schedule? Are you sure you want to do this? You can't reverse this`
-      ),
+      content: t(`You are going to delete this invoice? Are you sure you want to do this? You can't reverse this`),
       onOk() {
-        removeDoctorSchedule(id, (res) => {
+        removeInvoice(id, (res) => {
           if (res.status === 1) {
             notification.success({
               message: t(`Notification`),
-              description: `delete schedule of patient successful.`,
+              description: `delete invoice successful.`,
               placement: `bottomRight`,
               duration: 1.5,
             });
-            // setIsFinalUpdate(true)
-            // history.push(`/schedules/patient`);
-            window.location.reload()
+            window.location.reload();
           } else {
             notification.error({
               message: t(`Notification`),
-              description: `delete schedule of patient failed.`,
+              description: `delete invoice failed.`,
               placement: `bottomRight`,
               duration: 1.5,
             });
@@ -157,52 +160,31 @@ const ListInvoice = ({ match, t }) => {
       },
       centered: true,
     });
-  }
-  const handleTableChange = (pagination, filters, sorter) => {
-    let key = pagination.pageSize * (pagination.current - 1) + 1;
-    const storedUser = localStorage.getItem('eyesclinicsystem_user');
-    const user = JSON.parse(storedUser);
-    const id = user._id;
-    getAllDoctorSchedule(pagination, {}, {}, (res) => {
-      console.log('nnqa')
-      if (res.status === 1) {
-        res.data.schedule_list.forEach((schedule) => {
-          schedule.key = key++;
-        });
-
-        setData(res.data.schedule_list);
-        console.log(data)
-        setPagination({ ...pagination, total: res.data.meta_data.total })
-
-      } else if (res.status === 403) {
-        notification.error({
-          message: t(`Notification`),
-          description: `${res.message + " " + res.expiredAt}`,
-          placement: `bottomRight`,
-          duration: 10,
-        });
-      } else {
-        notification.error({
-          message: t(`Notification`),
-          description: `${res.message}`,
-          placement: `bottomRight`,
-          duration: 1.5,
-        });
-      }
-    }, []);
   };
 
-  useEffect(() => {
-    console.log(123)
-    getListInvoice(pagination, {}, {}, (res) => {
-      console.log(123)
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPagination(pagination);
+    fetchData(pagination, filters, sorter);
+  };
+
+  const handleSearch = (selectedKeys, confirm) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText('');
+  };
+
+  const fetchData = (pagination, filters, sorter) => {
+    getListInvoice(pagination, filters, sorter, (res) => {
       if (res.status === 1) {
         let key = 1;
         res.data.invoice_list.forEach((invoice) => {
           invoice.key = key++;
         });
         setData(res.data.invoice_list);
-        console.log(res)
         setPagination({ ...pagination, total: res.meta_data.total });
       } else if (res.status === 403) {
         notification.error({
@@ -220,12 +202,17 @@ const ListInvoice = ({ match, t }) => {
         });
       }
     });
+  };
+
+  useEffect(() => {
+    fetchData(pagination, {}, {});
   }, []);
+
   return (
     <CRow className="position-relative">
       <CCol xs="12" md="12" className="mb-4 position-absolute">
         <CCard>
-          <CCardHeader>{t("List Patient of Doctor's Schedules")}</CCardHeader>
+          <CCardHeader>{t("List Invoices")}</CCardHeader>
           <CCardBody>
             <Table
               className="overflow-auto"
@@ -241,4 +228,4 @@ const ListInvoice = ({ match, t }) => {
   );
 };
 
-export default withNamespaces()(ListInvoice)
+export default withNamespaces()(ListInvoice);

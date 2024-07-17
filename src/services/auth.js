@@ -1,6 +1,5 @@
-import { AxiosConfig } from "src/configs";
+
 import { failTokens } from "./failTokens";
-import sockets from "src/socket";
 import axios from "axios";
 
 export function isLoggedIn() {

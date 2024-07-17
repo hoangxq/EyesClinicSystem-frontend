@@ -1,6 +1,6 @@
 import { Actions, AxiosConfig } from "src/configs";
-import axios from "axios";
-import { getToken } from "src/services/auth";
+// import axios from "axios";
+// import { getToken } from "src/services/auth";
 
 require("dotenv").config();
 

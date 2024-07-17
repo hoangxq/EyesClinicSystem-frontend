@@ -4,23 +4,15 @@ import removeDiacritics from 'remove-diacritics';
 import { CCol, CRow, CCard, CCardBody, CCardHeader } from "@coreui/react";
 import {
   Table,
-  Tag,
   Space,
   notification,
   Modal,
   Input,
-  Select,
-  Divider,
-
-  // Avatar
   Button
 } from "antd";
 import { } from '@ant-design/icons';
 import {
   ExclamationCircleOutlined,
-  FilterOutlined,
-  UploadOutlined,
-  PlusSquareOutlined,
 } from "@ant-design/icons";
 import { Notification, Roles, Status, Type } from "src/configs";
 import { Link } from "react-router-dom";

@@ -58,6 +58,31 @@ export function getListInvoice(pagination, filter, sorter, callback) {
     });
 }
 
+export function getListInvoiceOfPatient(user_id, pagination, filter, sorter, callback) {
+  const axios = AxiosConfig();
+  let api = "";
+  if (Object.keys(filter).length === 0) {
+    // api = `/user?page=${pagination.current}&size=${pagination.pageSize}`;
+    api = `/invoice/patient/${user_id}`;
+  } else {
+    api = `/invoice/patient/${user_id}?page=${pagination.current}&size=${pagination.pageSize}&${filter.filterStr}`;
+  }
+  axios
+    .get(api)
+    .then((res) => {
+      callback(res.data);
+    })
+    .catch((err) => {
+      if (err.response) {
+        if (err.response.status === 403) {
+          getToken(() => getListInvoiceOfPatient(user_id, pagination, filter, sorter, callback));
+        } else {
+          callback(err.response.data);
+        }
+      }
+    });
+}
+
 export function createInvoice(invoiceData, callback) {
   const axios = AxiosConfig(); 
 

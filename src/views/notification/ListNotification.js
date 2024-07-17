@@ -67,30 +67,34 @@ const ListNotification = () => {
                 renderItem={item => (
                     <List.Item
                         key={item._id}
+                        style={{ marginBottom: '40px', border: '1px solid #e8e8e8', borderRadius: '5px', padding: '15px' }}
                         actions={[
-                            <Button type="link" onClick={() => showDetail(item)}>Xem chi tiết</Button>,
-                            userRole === 'ADMIN' && <Button type="link" danger>Delete</Button>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                                <Button style={{fontFamily: 'sans-serif', fontSize : '15px' }} type="link" onClick={() => showDetail(item)}>Xem chi tiết</Button>
+                                {userRole === 'ADMIN' && (
+                                    <Button style={{fontFamily: 'sans-serif', fontSize : '15px'  }} type="link" danger>Delete</Button>
+                                )}
+                            </div>
                         ]}
                         extra={
-                        <>
-                            <Text type="secondary">{moment(item.created_at).fromNow()}</Text>
-                            <div style={{ marginTop: '10px' }}>
-                                <img
-                                    width={100}
-                                    alt="logo"
-                                    src={item.photo || "https://via.placeholder.com/100"}
-                                    style={{ borderRadius: 10, cursor: 'pointer' }}
-                                    onClick={() => handleImageClick(item.photo)}
-                                />
-                            </div>
-                        </>
+                            <>
+                                <Text type="secondary">{moment(item.created_at).fromNow()}</Text>
+                                <div style={{ marginTop: '10px' }}>
+                                    <img
+                                        width={100}
+                                        alt="logo"
+                                        src={item.photo || "https://via.placeholder.com/100"}
+                                        style={{ borderRadius: 10, cursor: 'pointer' }}
+                                        onClick={() => handleImageClick(item.photo)}
+                                    />
+                                </div>
+                            </>
                         }
-                        style={{ marginBottom: '40px', border: '1px solid #e8e8e8', borderRadius: '5px', padding: '15px' }}
                     >
                         <List.Item.Meta
                             avatar={<Avatar src={item.image || "https://via.placeholder.com/40"} />}
-                            title={item.title}
-                            description={item.content}
+                            title={<Text strong style={{fontSize: '20px'}}>{item.title}</Text>}
+                            description={<Text strong>{item.content}</Text>}
                         />
                     </List.Item>
                 )}
@@ -112,7 +116,7 @@ const ListNotification = () => {
                             src={selectedNotification.photo}
                             alt="Notification"
                             style={{ width: '100%', marginTop: '20px', cursor: 'pointer' }}
-                            onClick={() => handleImageClick(selectedNotification.photo)} 
+                            onClick={() => handleImageClick(selectedNotification.photo)}
                         />
                     )}
                     {selectedImage && (

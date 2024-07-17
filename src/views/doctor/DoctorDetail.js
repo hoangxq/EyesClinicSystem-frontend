@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { CCol, CRow, CCard, CCardBody, CCardHeader } from "@coreui/react";
-import { Status } from "src/configs";
 import {
-  Table,
-  Space,
   Button,
   Modal,
   Form,
-  Input,
-  InputNumber,
-  Select,
   notification,
-  Upload,
-  Avatar,
-  Radio,
-  Divider,
 } from "antd";
 // import { useSelector } from 'react-redux';
 import {
@@ -24,8 +14,6 @@ import {
 } from "src/services/doctor";
 import {
   ExclamationCircleOutlined,
-  UploadOutlined,
-  PlusSquareOutlined,
 } from "@ant-design/icons";
 import { withNamespaces } from "react-i18next";
 import { useHistory } from "react-router";

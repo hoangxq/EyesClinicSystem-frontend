@@ -228,8 +228,8 @@ const Register = ({ t, location }) => {
                   rules={[{ required: true, message: t('Please select your type of account!') }]}
                 >
                   <Radio.Group>
-                    <Radio value={Roles.DOCTOR}>{Roles.DOCTOR}</Radio>
-                    <Radio value={Roles.NURSE}>{Roles.NURSE}</Radio>
+                    {/* <Radio value={Roles.DOCTOR}>{Roles.DOCTOR}</Radio>
+                    <Radio value={Roles.NURSE}>{Roles.NURSE}</Radio> */}
                     <Radio value={Roles.PATIENT}>{Roles.PATIENT}</Radio>
                   </Radio.Group>
                 </Form.Item>

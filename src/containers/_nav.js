@@ -51,7 +51,56 @@ const _nav = [
       }
     ],
   }] : []),
-  ...(userRole !== 'SALE' ? [{
+  // ...(userRole !== 'SALE' ? [{
+  //   _tag: 'CSidebarNavDropdown',
+  //   name: 'Lịch khám',
+  //   icon: 'cil-calendar',
+  //   _children: [
+  //     ...(userRole !== 'PATIENT' ? [{
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Danh sách lịch làm việc',
+  //       to: '/all-schedules-of-doctors',
+  //       permission: [Roles.ADMIN, Roles.NURSE, Roles.DOCTOR, Roles.RECEPTIONIST],
+  //     }] : []),
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Danh sách lịch làm việc',
+  //       to: '/patient/all-schedules-of-doctors',
+  //       permission: [Roles.PATIENT],
+  //     },
+  //     ...(userRole === null ? [{
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Danh sách lịch làm việc',
+  //       to: '/patient/all-schedules-of-doctors',
+  //       // permission: [Roles.PATIENT],
+  //     }] : []),
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Lịch làm việc',
+  //       to: `/schedule/user`,
+  //       permission: [Roles.DOCTOR],
+  //     },
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Đăng ký lịch làm việc',
+  //       to: '/schedules/create',
+  //       permission: [Roles.DOCTOR],
+  //     },
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Lịch khám đã đăng ký',
+  //       to: '/schedules/patient/',
+  //       permission: [Roles.PATIENT],
+  //     },
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Lịch khám đã đăng ký',
+  //       to: '/doctor_schedules',
+  //       permission: [Roles.ADMIN, Roles.RECEPTIONIST, Roles.NURSE],
+  //     },
+  //   ],
+  // }] : []),
+{
     _tag: 'CSidebarNavDropdown',
     name: 'Lịch khám',
     icon: 'cil-calendar',
@@ -96,10 +145,10 @@ const _nav = [
         _tag: 'CSidebarNavItem',
         name: 'Lịch khám đã đăng ký',
         to: '/doctor_schedules',
-        permission: [Roles.ADMIN, Roles.RECEPTIONIST, Roles.NURSE],
+        permission: [Roles.ADMIN, Roles.RECEPTIONIST, Roles.NURSE, Roles.SALE],
       },
     ],
-  }] : []),
+  },
   {
     _tag: "CSidebarNavDropdown",
     name: "Notification",

@@ -24,3 +24,41 @@ export function createMomoPayment(invoiceId, returnUrl, callback) {
             }
         });
 }
+
+export function createCashPayment(invoiceId, callback) {
+    const axiosConfig = AxiosConfig();
+
+    axiosConfig
+        .post(`invoice/payByCash/${invoiceId}`)
+        .then((res) => {
+            callback(res.data);
+        })
+        .catch((err) => {
+            if (err.response) {
+                if (err.response.status === 403) {
+                    getToken(() => createCashPayment(invoiceId, callback));
+                } else {
+                    callback(err.response.data);
+                }
+            }
+        });
+}
+
+export function createCashRefund(invoiceId, callback) {
+    const axiosConfig = AxiosConfig();
+
+    axiosConfig
+        .post(`invoice/refundByCash/${invoiceId}`)
+        .then((res) => {
+            callback(res.data);
+        })
+        .catch((err) => {
+            if (err.response) {
+                if (err.response.status === 403) {
+                    getToken(() => createCashRefund(invoiceId, callback));
+                } else {
+                    callback(err.response.data);
+                }
+            }
+        });
+}

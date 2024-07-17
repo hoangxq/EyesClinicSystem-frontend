@@ -4,32 +4,23 @@ import removeDiacritics from 'remove-diacritics';
 import { CCol, CRow, CCard, CCardBody, CCardHeader } from "@coreui/react";
 import {
   Table,
-  Tag,
   Space,
   notification,
   Modal,
   Input,
-  Select,
-  Divider,
-
-  // Avatar
-  Button
+  Button,
+  Form
 } from "antd";
-import { } from '@ant-design/icons';
 import {
   ExclamationCircleOutlined,
-  FilterOutlined,
-  UploadOutlined,
-  PlusSquareOutlined,
 } from "@ant-design/icons";
 import { Notification, Roles, Status, Type } from "src/configs";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router";
-import { getListUsers } from "src/services/user";
-import { numberWithCommas } from "src/services/money";
 import { withNamespaces } from "react-i18next";
 import { pagination as pag } from "src/configs/Pagination";
-import { getListSchedules, createDoctorSchedule } from "src/services/schedule";
+import { getListSchedules, createDoctorSchedule, createDoctorScheduleByPhoneNumber } from "src/services/schedule";
+import { searchUserByPhoneNumber } from "src/services/user";
 
 const ListSchedule = ({ t }) => {
   const [pagination, setPagination] = useState(pag);
@@ -37,6 +28,18 @@ const ListSchedule = ({ t }) => {
   const [searchText, setSearchText] = useState("");
   const [originalData, setOriginalData] = useState();
   const [filterTime, setFilterTime] = useState(null);
+  const [selectedRecordId, setSelectedRecordId] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [searchedUser, setSearchedUser] = useState(null); // State lưu trữ thông tin user tìm thấy
+  const [registerModalData, setRegisterModalData] = useState({
+    // Các trường dữ liệu cho form đăng ký thành viên mới
+    name: "",
+    email: "",
+    phone: "",
+    // Các trường dữ liệu khác cần thiết
+  });
   const history = useHistory();
   const storedUser = localStorage.getItem('eyesclinicsystem_user') || null;
   const user = JSON.parse(storedUser) || null;
@@ -131,10 +134,9 @@ const ListSchedule = ({ t }) => {
 
       }
   ];
+
   const handleSearch = (value) => {
-
     setSearchText(value);
-
     filterData(value);
   };
 
@@ -148,10 +150,73 @@ const ListSchedule = ({ t }) => {
     setData(filteredData);
   };
 
-
-  const handleRegisterAdminClick = () => {
-    history.push('/schedules/patient');
+  const handleRegisterAdminClick = (id) => {
+    setIsModalVisible(true);
+    setSelectedRecordId(id)
   };
+
+  const handleShowRegisterModal = () => {
+    setIsRegisterModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setIsRegisterModalVisible(false);
+    setSearchedUser(null);
+    setPhoneNumber(""); 
+  };
+
+  const handlePhoneNumberChange = async (e) => {
+    const value = e.target.value;
+    setPhoneNumber(value);
+  };
+
+  const handleSearchUser = async () => {
+    searchUserByPhoneNumber(phoneNumber, (data) => {
+      if (data.data.user_info) {
+        setSearchedUser(data.data.user_info);
+      } else {
+        setSearchedUser(null);
+      }
+    });
+  };
+
+  const handleAddNewPatient = () => {
+    // Add logic to handle adding a new patient
+    if (selectedRecordId && phoneNumber) {
+      createDoctorScheduleByPhoneNumber(selectedRecordId, phoneNumber, (res) => {
+        if (res.status === 1) {
+          notification.success({
+            message: t(`Notification`),
+            description: `Create schedule of patient successful.`,
+            placement: `bottomRight`,
+            duration: 1.5,
+          });
+          setIsModalVisible(false);
+        } else {
+          notification.error({
+            message: t(`Notification`),
+            description: `Create schedule of patient failed.`,
+            placement: `bottomRight`,
+            duration: 1.5,
+          });
+        }
+      });
+    } else {
+      // Handle case when selectedRecordId or phoneNumber is not available
+      notification.error({
+        message: t(`Notification`),
+        description: `Missing selected record ID or phone number.`,
+        placement: `bottomRight`,
+        duration: 1.5,
+      });
+    }
+    console.log("Adding new patient with phone number:", phoneNumber);
+    setIsModalVisible(false);
+    setSearchedUser(null);
+    setPhoneNumber("");
+  };
+
   const handleRegisterClick = (schedule_id, patient_id) => {
     Modal.confirm({
       title: t(`Đăng ký lịch khám`),
@@ -172,7 +237,6 @@ const ListSchedule = ({ t }) => {
               placement: `bottomRight`,
               duration: 1.5,
             });
-            // setIsFinalUpdate(true)
             history.push(`/schedules/patient`);
           } else {
             notification.error({
@@ -194,12 +258,12 @@ const ListSchedule = ({ t }) => {
       },
       centered: true,
     });
-  }
+  };
+
   const handleTableChange = (pagination, filters, sorter) => {
     let key = pagination.pageSize * (pagination.current - 1) + 1;
     getListSchedules(pagination, {}, {}, (res) => {
       if (res.status === 1) {
-        // let key = 1;
         res.data.schedule_list.forEach((schedule) => {
           schedule.key = key++;
         });
@@ -234,7 +298,6 @@ const ListSchedule = ({ t }) => {
         });
         setData(res.data.schedule_list);
         setOriginalData(res.data.schedule_list);
-        console.log(res)
         setPagination({ ...pagination, total: res.meta_data.total });
       } else if (res.status === 403) {
         notification.error({
@@ -253,15 +316,10 @@ const ListSchedule = ({ t }) => {
       }
     });
   }, []);
+
   return (
-
     <CRow className="position-relative">
-
       <CCol xs="12" md="12" className="mb-4 position-absolute">
-        {/* <Divider />
-        <p style={{ color: "gray", fontSize: "15px" }}>
-          {t("*")} {t("Ca 1")}: 8h-10h, {t("Ca 2")}: 10h-12h, {t("Ca 3")}: 13h-15h, {t("Ca 4")}: 15h-17h
-        </p> */}
         <Input.Search
           size="large"
           placeholder={t("Nhập tên bác sĩ")}
@@ -272,7 +330,6 @@ const ListSchedule = ({ t }) => {
           <CCardHeader>{t("List Schedules")} <p style={{ color: "gray", fontSize: "15px", textAlign: "right" }}>
             {t("*")} {t("Ca 1")}: 8h-10h, {t("Ca 2")}: 10h-12h, {t("Ca 3")}: 13h-15h, {t("Ca 4")}: 15h-17h
           </p></CCardHeader>
-
           <CCardBody>
             <Table
               className="overflow-auto"
@@ -283,6 +340,59 @@ const ListSchedule = ({ t }) => {
             />
           </CCardBody>
         </CCard>
+        <Modal
+          title={t("Add New Patient")}
+          visible={isModalVisible}
+          onOk={handleAddNewPatient}
+          onCancel={handleCancel}
+        >
+          <Form.Item label={t("Phone Number")}>
+            <Input
+              value={phoneNumber}
+              onChange={handlePhoneNumberChange}
+              onPressEnter={handleSearchUser}
+            />
+          </Form.Item>
+          {searchedUser ? (
+            <div>
+              <p>{t("User found:")}</p>
+              <p>{t("Name")}: {searchedUser.name}</p>
+              <p>{t("Email")}: {searchedUser.email}</p>
+              <p>{t("Phone")}: {searchedUser.phone}</p>
+            </div>
+          ) : (
+            phoneNumber && <Button onClick={handleShowRegisterModal}>{t("Đăng ký user mới")}</Button>
+          )}
+        </Modal>
+        <Modal
+          title={t("Register New Patient")}
+          visible={isRegisterModalVisible}
+          onOk={handleAddNewPatient}
+          onCancel={handleCancel}
+        >
+          {/* Form đăng ký thành viên mới */}
+          <Form>
+            <Form.Item label={t("Name")}>
+              <Input
+                value={registerModalData.name}
+                onChange={(e) => setRegisterModalData({ ...registerModalData, name: e.target.value })}
+              />
+            </Form.Item>
+            <Form.Item label={t("Email")}>
+              <Input
+                value={registerModalData.email}
+                onChange={(e) => setRegisterModalData({ ...registerModalData, email: e.target.value })}
+              />
+            </Form.Item>
+            <Form.Item label={t("Phone")}>
+              <Input
+                value={registerModalData.phone}
+                onChange={(e) => setRegisterModalData({ ...registerModalData, phone: e.target.value })}
+              />
+            </Form.Item>
+            {/* Thêm các trường dữ liệu khác cần thiết cho form đăng ký */}
+          </Form>
+        </Modal>
       </CCol>
     </CRow>
   );

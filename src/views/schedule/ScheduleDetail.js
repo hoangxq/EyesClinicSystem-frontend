@@ -304,7 +304,7 @@ const ScheduleDetail = ({ match, t }) => {
         <CCard>
           <CCardHeader>{t("List Patient of Doctor's Schedules")}</CCardHeader>
           <CCardBody>
-            <Button type="primary" onClick={showModal}>
+            {/* <Button type="primary" onClick={showModal}>
               <PlusSquareOutlined /> {t("Add New")}
             </Button>
             <Modal
@@ -319,7 +319,7 @@ const ScheduleDetail = ({ match, t }) => {
                   onChange={handlePhoneNumberChange}
                 />
               </Form.Item>
-            </Modal>
+            </Modal> */}
             <Table
               className="overflow-auto"
               columns={columns}

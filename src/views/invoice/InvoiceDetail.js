@@ -6,9 +6,8 @@ import { useSelector } from "react-redux";
 import { withNamespaces } from "react-i18next";
 import moment from "moment";
 import { getInvoiceDetail } from "src/services/invoice";
-import { createMomoPayment } from "src/services/payment";
+import { createMomoPayment, createCashPayment,createCashRefund } from "src/services/payment";
 import "src/scss/invoiceDetail.scss";
-
 
 const InvoiceDetail = ({ match, t }) => {
     const [data, setData] = useState();
@@ -16,6 +15,7 @@ const InvoiceDetail = ({ match, t }) => {
     const user = JSON.parse(storedUser);
     const userId = user._id;
     const userRole = user.role;
+
     useEffect(() => {
         getInvoiceDetail(match.params._id, (res) => {
             console.log(match.params._id);
@@ -77,6 +77,44 @@ const InvoiceDetail = ({ match, t }) => {
         });
     };
 
+    const handlePaymentByCash = () => {
+        createCashPayment(match.params._id, (res) => {
+            if (res.status === 1) {
+                notification.success({
+                    message: "Thanh toán thành công",
+                    description: res.message,
+                    placement: "bottomRight",
+                });
+                window.location.reload(); 
+            } else {
+                notification.error({
+                    message: "Lỗi thanh toán",
+                    description: res.message,
+                    placement: "bottomRight",
+                });
+            }
+        });
+    };
+
+    const handleRefundByCash = () => {
+        createCashRefund(match.params._id, (res) => {
+            if (res.status === 1) {
+                notification.success({
+                    message: "Hoàn thành công",
+                    description: res.message,
+                    placement: "bottomRight",
+                });
+                window.location.reload(); 
+            } else {
+                notification.error({
+                    message: "Lỗi hoàn tiền",
+                    description: res.message,
+                    placement: "bottomRight",
+                });
+            }
+        });
+    };
+
     return (
         <>
             <CRow className="justify-content-center">
@@ -116,13 +154,20 @@ const InvoiceDetail = ({ match, t }) => {
                                     {(data.invoice.status === 0 || data.invoice.status === 3) && (
                                         <Descriptions.Item span={3}>
                                             <Button onClick={handlePayment} type="primary">
-                                                {t("Thanh toán")}
+                                                {t("Thanh toán Momo")}
                                             </Button>
-                                            {userRole === "ADMIN" && (
-                                                <Button onClick={handlePayment} type="default" style={{ marginLeft: '10px' }}>
-                                                    {t("Thanh toán bằng tiền mặt")}
+                                            {(userRole === "ADMIN" || userRole === "SALE") && (
+                                                <Button onClick={handlePaymentByCash} type="default" style={{ marginLeft: '10px' }}>
+                                                    {t("Thanh toán tiền mặt")}
                                                 </Button>
                                             )}
+                                        </Descriptions.Item>
+                                    )}
+                                    {data.invoice.status === 1 && (userRole === "ADMIN" || userRole === "SALE") && (
+                                        <Descriptions.Item span={3}>
+                                            <Button onClick={handleRefundByCash} type="default" style={{ marginLeft: '10px' }}>
+                                                {t("Hoàn bằng tiền mặt")}
+                                            </Button>
                                         </Descriptions.Item>
                                     )}
                                 </Descriptions>

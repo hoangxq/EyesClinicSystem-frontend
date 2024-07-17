@@ -147,7 +147,7 @@ const routes = [
     path: "/doctor_schedules",
     name: "List Doctor Schedules",
     component: ListDoctorSchedule,
-    permission: [Roles.ADMIN, Roles.NURSE, Roles.DOCTOR, Roles.RECEPTIONIST],
+    permission: [Roles.ADMIN, Roles.NURSE, Roles.DOCTOR, Roles.RECEPTIONIST, Roles.SALE],
     exact: true,
   },
   {
@@ -163,7 +163,7 @@ const routes = [
     path: "/history/:schdeuleId",
     name: "History Examination",
     component: HistoryDetail,
-    permission: [Roles.ADMIN, Roles.DOCTOR, Roles.NURSE, Roles.PATIENT],
+    permission: [Roles.ADMIN, Roles.DOCTOR, Roles.NURSE, Roles.PATIENT, Roles.SALE],
     exact: true,
   },
   {

@@ -58,14 +58,15 @@ const AddProduct = ({ t }) => {
               message: t('Notification'),
               description: 'Create product successful.',
               placement: 'bottomRight',
-              duration: 1.5,
+              duration: 2,
             });
+            window.location.reload()
           } else {
             notification.error({
               message: t('Notification'),
               description: t(`${res.message}`),
               placement: 'bottomRight',
-              duration: 1.5,
+              duration: 2,
             });
           }
         });
